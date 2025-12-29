@@ -1,6 +1,6 @@
 [package]
 name = "branded"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 authors = ["Mats Jun Larsen <mats@larsendigital.no>"]
 repository = "https://github.com/larsendigital/branded"
