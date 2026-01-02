@@ -51,14 +51,15 @@
 //!
 //! ## UUID
 //!
-//! The `uuid` feature exposes `nil()` and `new_v4()` methods on the branded type. Pass `uuid` as an
-//! option to the `Branded` derive macro to enable this feature.
+//! The `uuid` feature exposes `nil()` and `new_v4()/new_v7()` methods on the branded type. Pass
+//! `uuid` as an option to the `Branded` derive macro to enable this feature. We support both UUID
+//! versions 4 and 7.
 //!
 //! ```
 //! use branded::Branded;
 //!
 //! #[derive(Branded)]
-//! #[branded(uuid)]
+//! #[branded(uuidv4, uuidv7)]
 //! pub struct UserId(uuid::Uuid);
 //! ```
 

@@ -11,7 +11,9 @@ pub(crate) struct BrandedTypeOptions {
     #[darling(default)]
     serde: bool,
     #[darling(default)]
-    uuid: bool,
+    uuidv4: bool,
+    #[darling(default)]
+    uuidv7: bool,
     #[darling(default)]
     sqlx: bool,
 }
@@ -82,8 +84,16 @@ pub(crate) fn expand_branded_derive(
         tokens.extend(expand_sqlx_impl(struct_name));
     }
 
-    if options.uuid {
-        tokens.extend(expand_uuid_impl(struct_name));
+    if options.uuidv4 || options.uuidv7 {
+        tokens.extend(expand_uuid_nil_impl(struct_name));
+    }
+
+    if options.uuidv4 {
+        tokens.extend(expand_uuidv4_impl(struct_name));
+    }
+
+    if options.uuidv7 {
+        tokens.extend(expand_uuidv7_impl(struct_name));
     }
 
     Ok(tokens)
@@ -282,17 +292,38 @@ pub(crate) fn expand_sqlx_impl(brand_struct_name: &syn::Ident) -> proc_macro2::T
     }
 }
 
-pub(crate) fn expand_uuid_impl(brand_struct_name: &syn::Ident) -> proc_macro2::TokenStream {
+pub(crate) fn expand_uuidv4_impl(brand_struct_name: &syn::Ident) -> proc_macro2::TokenStream {
     quote! {
         impl #brand_struct_name
         where
             for<'__branded> Self: Branded<Inner = ::uuid::Uuid>
         {
-            /// Get the nil UUID.
-            pub fn nil() -> Self { Self::new(::uuid::Uuid::nil()) }
-
             /// Get a new random UUID v4.
             pub fn new_v4() -> Self { Self::new(::uuid::Uuid::new_v4()) }
+        }
+    }
+}
+
+pub(crate) fn expand_uuid_nil_impl(brand_struct_name: &syn::Ident) -> proc_macro2::TokenStream {
+    quote! {
+        impl #brand_struct_name
+        where
+            for<'__branded> Self: Branded<Inner = ::uuid::Uuid>
+        {
+            /// Get a new random UUID v4.
+            pub fn nil() -> Self { Self::new(::uuid::Uuid::nil()) }
+        }
+    }
+}
+
+pub(crate) fn expand_uuidv7_impl(brand_struct_name: &syn::Ident) -> proc_macro2::TokenStream {
+    quote! {
+        impl #brand_struct_name
+        where
+            for<'__branded> Self: Branded<Inner = ::uuid::Uuid>
+        {
+            /// Get a new random UUID v7.
+            pub fn new_v7() -> Self { Self::new(::uuid::Uuid::new_v4()) }
         }
     }
 }

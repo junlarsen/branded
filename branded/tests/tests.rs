@@ -83,17 +83,36 @@ mod sqlx {
     }
 }
 
-#[cfg(feature = "uuid")]
-mod uuid {
+#[cfg(feature = "uuidv4")]
+mod uuidv4 {
     use branded::Branded;
 
     #[test]
     fn test_uuid_derive() {
         #[derive(Branded)]
-        #[branded(uuid)]
+        #[branded(uuidv4)]
         pub struct UserId(uuid::Uuid);
 
         let id = UserId::new_v4();
+        let str = id.to_string();
+        assert_eq!(str.len(), 36);
+
+        let nil = UserId::nil();
+        assert_eq!(nil.inner(), &uuid::Uuid::nil());
+    }
+}
+
+#[cfg(feature = "uuidv7")]
+mod uuidv7 {
+    use branded::Branded;
+
+    #[test]
+    fn test_uuid_derive() {
+        #[derive(Branded)]
+        #[branded(uuidv7)]
+        pub struct UserId(uuid::Uuid);
+
+        let id = UserId::new_v7();
         let str = id.to_string();
         assert_eq!(str.len(), 36);
 
